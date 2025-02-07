@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model ScanDirectoryModel
+
+<div class="text-center">
+    <h2 class="display-4">This is demo application for detecting changes in the directory.</h2>
+
+    <p>Fill the directory path and hit 'Scan' </p>
+</div>
+
+<form asp-action="ScanDirectoryForm" asp-controller="Home">
+    <label>Directory path</label>
+    <input class="form-control" type="text" asp-for="DirectoryPath" placeholder="<directory path>" />
+
+    <button class="btn btn-primary mt-4" type="submit">Scan</button>
+</form>
+
+<br />
+
+@{
+    if(Model?.ErrorMessage != null)
+    {
+        <p>The selected directory does not exist !</p>
+        return;
+    }
+
+    if (Model?.Changes == null || Model?.Changes?.Count() == 0)
+    {
+        <p>There are no changes from previous scan.</p>
+        return;
+    }
+
+    <div class="text-center">
+        <h3>Directory state</h3>
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        File states: added, modified, deleted
+                    </th>
+                    <th>
+                        File full path
+                    </th>
+                    <th>
+                        Version
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var change in Model?.Changes ?? [])
+                    {
+                        <tr>
+                            <td>
+                                @change.ChangeType
+                            </td>
+                            <td>
+                                @change.Path
+                            </td>
+                            <td>
+                                @change.Version
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
